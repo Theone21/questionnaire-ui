@@ -8,8 +8,8 @@
           <el-form-item label="用户名" prop="userName">
             <el-input v-model="ruleForm.userName"></el-input>
           </el-form-item>
-          <el-form-item label="密码" prop="password">
-            <el-input v-model="ruleForm.password" type="password"></el-input>
+          <el-form-item label="密码" prop="userPassword">
+            <el-input v-model="ruleForm.userPassword" type="password"></el-input>
           </el-form-item>
           <el-form-item>
             <el-button @click="submitForm('userPassForm')" type="primary">登录</el-button>
@@ -23,19 +23,20 @@
 </template>
 
 <script>
+  import {login} from '../api/api';
   export default {
     name: "Login",
     data(){
       return {
         ruleForm: {
           userName: '',
-          password: ''
+          userPassword: ''
         },
         rules: {
           userName: [
             {required: true, message: '用户名必须填写', trigger: 'blur'}
           ],
-          password: [
+          userPassword: [
             {required: true, message: '密码必须填写', trigger: 'blur'}
           ]
         }
@@ -45,7 +46,13 @@
       submitForm(formName){
         this.$refs[formName].validate((valid) => {
           if(valid){
-            alert('成功');
+            login(this.ruleForm).then(res => {
+              if(res.code == 200){
+                this.$router.addRoutes('/');
+              } else {
+                alert("没有该用户");
+              }
+            })
           } else {
             return false;
           }
@@ -80,8 +87,9 @@
       .form-box{
         width: 500px;
         margin: 0 auto;
-        padding: 0 50px 0 0;
+        padding: 0 50px 10px 0;
         background-color: #ffffff1f;
+        border-radius: 5px;
         h3{
           line-height: 60px;
           font-size: 16px;

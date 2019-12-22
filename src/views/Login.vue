@@ -47,8 +47,8 @@
         this.$refs[formName].validate((valid) => {
           if(valid){
             login(this.ruleForm).then(res => {
-              if(res.code == 200){
-                this.$router.addRoutes('/');
+              if(res.data.code == 200){
+                this.$router.push('/');
               } else {
                 alert("没有该用户");
               }

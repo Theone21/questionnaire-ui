@@ -3,8 +3,6 @@ let console = require('console');
 function resolve(dir) {
     return path.join(__dirname, dir)
 }
-console.log(process.env.NODE_ENV);
-console.log(process.env.BASE_URL);
 module.exports = {
     chainWebpack: config => {
 

@@ -9,7 +9,6 @@ import qs from 'qs';
 axios.defaults.timeout = 60000;
 axios.defaults.baseURL = process.env.BASE_URL;
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';
-axios.defaults.headers.get['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';
 
 export function get(url, params) {
     return axios.get(url, {

@@ -25,6 +25,9 @@ const routes = [
       }, {
         path: 'role',
         component: () => import(/* webpackChunkName: "role" */ '../views/systemManagement/Role.vue')
+      }, {
+        path: 'function',
+        component: () => import(/* webpackChunkName: "role" */ '../views/systemManagement/Function.vue')
       }
     ]
 

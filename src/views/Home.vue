@@ -7,8 +7,8 @@
             <template slot="title"><i class="el-icon-message"></i>系统管理</template>
             <el-menu-item-group>
               <el-menu-item index="1-1" @click="goPage('/systemManagement/user')">用户管理</el-menu-item>
-              <el-menu-item index="1-2">角色管理</el-menu-item>
-              <el-menu-item index="1-3">权限管理</el-menu-item>
+              <el-menu-item index="1-2" @click="goPage('/systemManagement/role')">角色管理</el-menu-item>
+              <el-menu-item index="1-3" @click="goPage('/systemManagement/function')">权限管理</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
           <el-submenu index="2">

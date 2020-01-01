@@ -66,7 +66,7 @@ export default {
       },
       tableColumn: [
         { type: 'checkbox', width: 50 },
-        { type: 'seq', width: 60 },
+        { type: 'seq', width: 60, title: '序号' },
         { field: 'userName', title: '用户名', editRender: { name: 'input' } },
         {field: 'userPassword', title: '密码', editRender: { name: 'input' }}
       ]
@@ -91,6 +91,6 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="less">
 
 </style>

@@ -47,9 +47,9 @@ export default {
       tableToolbar: {
         id: "test",
         buttons: [
-          { id: 1, code: 'insert_actived', name: '新增' },
-          { id: 2, code: 'delete', name: '移除数据' },
-          { id: 3, code: 'save', name: '保存' },
+          { id: 1, code: 'insert_actived', name: '新增用户' },
+          { id: 2, code: 'delete', name: '删除用户' },
+          { id: 3, code: 'save', name: '保存用户' },
         ],
         refresh: true, // 刷新按钮
         import: true, // 导入按钮

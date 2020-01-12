@@ -8,8 +8,6 @@ module.exports = {
 
         config.plugin("define").tap(args => {
             args[0]["process.env"].BASE_URL = JSON.stringify(process.env.BASE_URL);
-            console.log(args);
-            console.log(args[0]);
             return args;
         });
 

@@ -2,7 +2,6 @@
   <div class="test">
     <vxe-table
       border
-      height="600"
       :span-method="rowspanMethod"
       :data="tableData">
       <vxe-table-column field="name_1" title="功能模块"></vxe-table-column>
@@ -185,7 +184,8 @@ export default {
           ]
         }
       ],
-      tableData: []
+      tableData: [],
+      num: 0
     };
   },
   created() {

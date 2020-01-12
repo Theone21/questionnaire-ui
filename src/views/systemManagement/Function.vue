@@ -1,71 +1,138 @@
 <template>
   <div class="function">
-    <vxe-grid
-      border
-      resizable
-      height="530"
-      :pager-config="tablePage"
-      :proxy-config="tableProxy"
-      :columns="tableColumn"
-      :toolbar="tableToolbar"
-      :edit-config="{trigger: 'click', mode: 'row', showStatus: true}"></vxe-grid>
+    <div class="tool-box">
+      <el-button type="primary" @click="dialogFunctionVisible = true;">添加权限</el-button>
+    </div>
+
+    <el-dialog title="新增权限" :visible.sync="dialogFunctionVisible" width="500px">
+      <el-form :model="functionData" :rules="functionDataRules" ref="functionForm">
+        <el-form-item label="权限类型" :label-width="formLabelWidth" prop="functionType">
+          <el-radio-group v-model="functionData.functionType">
+            <el-radio :label="0">功能模块</el-radio>
+            <el-radio :label="1">详细功能</el-radio>
+            <el-radio :label="2">操作权限</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="功能模块" :label-width="formLabelWidth" prop="functionParentId" v-if="functionData.functionType == 1">
+          <el-select v-model="functionData.functionParentId" placeholder="请选择">
+            <el-option
+              v-for="item in functions"
+              :key="item.functionId"
+              :label="item.functionName"
+              :value="item.functionId">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="详细功能" :label-width="formLabelWidth" v-if="functionData.functionType == 2">
+          <el-cascader
+            v-model="detailFunction"
+            :options="functionAndDetails"></el-cascader>
+        </el-form-item>
+        <el-form-item label="权限名称" :label-width="formLabelWidth" prop="functionName">
+          <el-input v-model="functionData.functionName" autocomplete="off" autofocus="true"></el-input>
+        </el-form-item>
+        <el-form-item label="权限编码" :label-width="formLabelWidth" prop="functionCode">
+          <el-input v-model="functionData.functionCode" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFunctionVisible = false">取 消</el-button>
+        <el-button type="primary" @click="addFunction">确 定</el-button>
+      </div>
+    </el-dialog>
+
+    
+      
   </div>
 </template>
 
 <script>
 import {get, post} from '@/api/request'
-import axios from 'axios'
+// import axios from 'axios'
 export default {
   name: 'function',
   data() {
     return {
-      tablePage: {
-        pageSize: 5
+      dialogFunctionVisible: false,
+      formLabelWidth: '120px',
+      functionData: {
+        functionName: '',
+        functionCode: '',
+        functionType: 0,
+        functionParentId: ''
       },
-      tableProxy: {
-        // 配置响应的数据属性
-        props: {
-          result: 'data',
-          total: 'count'
-        },
-        ajax: {
-          // page 对象： { pageSize, currentPage }
-          query: ({ page }) => get('/sys/getFunctionList', page), // 模拟请求
-          // body 对象： { removeRecords }
-          delete: ({ body }) => axios.post('/sys/delFunction', body.removeRecords),
-          // body 对象： { insertRecords, updateRecords, removeRecords, pendingRecords }
-          save: ({ body }) => {
-            return post('/sys/addFunction', body.insertRecords.length > 0 ? body.insertRecords[0] : body.updateRecords[0]);
-          }
-        }
-      },
-      tableToolbar: {
-        id: "test",
-        buttons: [
-          { id: 1, code: 'insert_actived', name: '新增权限' },
-          { id: 2, code: 'delete', name: '删除权限' },
-          { id: 3, code: 'save', name: '保存权限' },
+      functionDataRules: {
+        functionName: [
+          {required: true, message: '请输入权限名称', trigger: 'blur'}
         ],
-        refresh: true, // 刷新按钮
-        import: true, // 导入按钮
-        export: true, // 导出按钮
-        zoom: true, // 最大化按钮
-        // 列宽操作记录
-        resizable: {
-          storage: true
-        },
-        // 列操作记录
-        custom: {
-          storage: true
-        }
+        functionCode: [
+          {required: true, message: '请输入权限编码', trigger: 'blur'}
+        ],
+        functionType: [
+          {required: true, message: '权限类型必须选择', trigger: 'blur'}
+        ],
+        functionParentId: [
+          {required: true, message: '权限类型必须选择', trigger: 'blur'}
+        ]
       },
-      tableColumn: [
-        { type: 'checkbox', width: 50 },
-        { type: 'seq', width: 60, title: '序号' },
-        { field: 'functionName', title: '权限名称', editRender: { name: 'input' } },
-        {field: 'functionCode', title: '权限编码', editRender: { name: 'input' }}
-      ]
+      functions: [],
+      detailFunction: [],
+      functionAndDetails: [],
+      functionAndDetailAndButton: []
     };
+  },
+  created() {
+    this.getAllFunctions();
+    this.getFunctionAndDetail();
+    this.getFunctionAndDetailAndButton();
+  },
+  methods: {
+    getAllFunctions() {
+      get('/function/getAllFunctions', {
+        functionType: 0
+      }).then((res) => {
+        if (res.code == 200) {
+          this.functions = res.data;
+        }
+      });
+    },
+    getFunctionAndDetail() {
+      get('/function/getFunctionAndDetail', {})
+        .then((res) => {
+          if (res.code == 200) {
+            this.functionAndDetails = res.data;
+            if (res.data.length > 0 && res.data[0].children && res.data[0].children.length > 0) {
+              this.detailFunction[0] = this.functionAndDetails[0].value;
+              this.detailFunction[1] = this.functionAndDetails[0].children[0].value;
+            }
+          }
+        })
+    },
+    getFunctionAndDetailAndButton(){
+      get('/function/getFunctionAndDetailAndButton', {})
+        .then((res) => {
+          if (res.code == 200) {
+            this.functionAndDetailAndButton = res.data;
+          }
+        })
+    },
+    addFunction(){
+      this.$refs['functionForm'].validate((valid) => {
+        if(valid){
+          if (this.functionData.functionType == 2) {
+            this.functionData.functionParentId = this.detailFunction[1];
+          }
+          post('/function/addFunction', this.functionData)
+            .then((res) => {
+              if (res.code == 200) {
+                this.$message.success('新增功能权限成功');
+                this.dialogFunctionVisible = false;
+                this.$refs['functionForm'].resetFields();
+              }
+            })
+        }
+      })
+    }
   }
   
 }

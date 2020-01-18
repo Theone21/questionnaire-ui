@@ -4,6 +4,8 @@
       <el-button type="primary" @click="dialogFunctionVisible = true;">添加权限</el-button>
     </div>
 
+    <FunctionTable ref="functionTable" :showDelBtn="true"></FunctionTable>
+
     <el-dialog title="新增权限" :visible.sync="dialogFunctionVisible" width="500px">
       <el-form :model="functionData" :rules="functionDataRules" ref="functionForm">
         <el-form-item label="权限类型" :label-width="formLabelWidth" prop="functionType">
@@ -47,10 +49,15 @@
 </template>
 
 <script>
+
 import {get, post} from '@/api/request'
+import FunctionTable from "@/components/FunctionTable";
 // import axios from 'axios'
 export default {
   name: 'function',
+  components: {
+    FunctionTable
+  },
   data() {
     return {
       dialogFunctionVisible: false,
@@ -77,16 +84,17 @@ export default {
       },
       functions: [],
       detailFunction: [],
-      functionAndDetails: [],
-      functionAndDetailAndButton: []
+      functionAndDetails: []
     };
   },
   created() {
-    this.getAllFunctions();
-    this.getFunctionAndDetail();
-    this.getFunctionAndDetailAndButton();
+    this.init();
   },
   methods: {
+    init(){
+      this.getAllFunctions();
+      this.getFunctionAndDetail();
+    },
     getAllFunctions() {
       get('/function/getAllFunctions', {
         functionType: 0
@@ -108,14 +116,6 @@ export default {
           }
         })
     },
-    getFunctionAndDetailAndButton(){
-      get('/function/getFunctionAndDetailAndButton', {})
-        .then((res) => {
-          if (res.code == 200) {
-            this.functionAndDetailAndButton = res.data;
-          }
-        })
-    },
     addFunction(){
       this.$refs['functionForm'].validate((valid) => {
         if(valid){
@@ -128,6 +128,7 @@ export default {
                 this.$message.success('新增功能权限成功');
                 this.dialogFunctionVisible = false;
                 this.$refs['functionForm'].resetFields();
+                this.$refs.functionTable.getFunctionAndDetailAndButton();
               }
             })
         }
@@ -139,5 +140,8 @@ export default {
 </script>
 
 <style scoped lang="less">
-
+.tool-box{
+  padding: 5px 10px 5px 0;
+  text-align: left;
+}
 </style>

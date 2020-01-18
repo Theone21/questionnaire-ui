@@ -13,13 +13,9 @@
     <el-dialog
       title="请为该角色设置权限"
       :visible.sync="dialogVisible"
-      width="30%">
+      >
       <div>
-        <ul>
-          <li v-for="fun in functions" :key="fun">
-            <el-checkbox v-model="checked" v-text="fun.functionName"></el-checkbox>
-          </li>
-        </ul>
+        <FunctionTable ref="functionTable" :showDelBtn="false"></FunctionTable>
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
@@ -32,12 +28,15 @@
 <script>
 import {post} from '@/api/request'
 import axios from 'axios'
+import FunctionTable from "@/components/FunctionTable";
 export default {
   name: 'role',
+  components: {
+    FunctionTable
+  },
   data(){
     return {
       dialogVisible: false,
-      functions: [],
       tablePage: {
         pageSize: 15
       },

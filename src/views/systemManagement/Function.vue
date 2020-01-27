@@ -129,6 +129,7 @@ export default {
                 this.dialogFunctionVisible = false;
                 this.$refs['functionForm'].resetFields();
                 this.$refs.functionTable.getFunctionAndDetailAndButton();
+                this.init();
               }
             })
         }

@@ -4,7 +4,7 @@
       <el-aside width="200px" style="background-color: rgb(238, 241, 246)">
         <el-menu>
           <el-submenu index="1">
-            <template slot="title"><i class="el-icon-message"></i>系统管理1</template>
+            <template slot="title"><i class="el-icon-message"></i>系统管理</template>
             <el-menu-item-group>
               <el-menu-item index="1-1" @click="goPage('/systemManagement/user')">用户管理</el-menu-item>
               <el-menu-item index="1-2" @click="goPage('/systemManagement/role')">角色管理</el-menu-item>

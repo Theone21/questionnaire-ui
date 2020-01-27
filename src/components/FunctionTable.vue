@@ -10,7 +10,7 @@
       </vxe-table-column>
       <vxe-table-column field="name_2" title="详细功能">
         <template v-slot="{ row }">
-          <vxe-checkbox v-model="row.check_2" @change="check2ChangeEvent(row)">{{ row.name_2 }}</vxe-checkbox>
+          <vxe-checkbox v-model="row.check_2" @change="check2ChangeEvent(row)" v-if="!!row.name_2">{{ row.name_2 }}</vxe-checkbox>
         </template>
       </vxe-table-column>
       <vxe-table-column field="name_3" title="按钮权限">

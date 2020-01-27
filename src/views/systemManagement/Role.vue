@@ -19,7 +19,7 @@
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+        <el-button type="primary" @click="bindRoleAndFunction">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -95,10 +95,29 @@ export default {
     };
   },
   methods: {
-    openSetFuntionDialog(row, column) {
-      console.log(row);
-      console.log(column);
+    openSetFuntionDialog(row) {
+      
       this.dialogVisible = true;
+      this.selectedRoleId = row.roleId;
+    },
+    bindRoleAndFunction() {
+      let functionIds = [];
+      this.$refs['functionTable'].tableData.forEach(element => {
+        [1, 2, 3].forEach(item => {
+          if(element['check_' + item] && element['id_' + item] && functionIds.indexOf(element['id_' + item]) == -1){
+            functionIds.push(element['id_' + item]);
+          }
+        })
+      });
+      post('/role/bindRoleAndFunction', {
+        functionIds: JSON.stringify(functionIds),
+        roleId: this.selectedRoleId
+      }).then((res) => {
+        if(res.code == 200){
+          this.$message.success('设置权限成功');
+          this.dialogVisible = false;
+        }
+      })
     }
   }
 }

@@ -1,25 +1,25 @@
 <template>
   <vxe-table
-      border
-      :span-method="rowspanMethod"
-      :data="tableData">
-      <vxe-table-column field="name_1" title="功能模块">
-        <template v-slot="{ row }">
-          <vxe-checkbox v-model="row.check_1" @change="check1ChangeEvent(row)">{{ row.name_1 }}</vxe-checkbox>
-        </template>
-      </vxe-table-column>
-      <vxe-table-column field="name_2" title="详细功能">
-        <template v-slot="{ row }">
-          <vxe-checkbox v-model="row.check_2" @change="check2ChangeEvent(row)" v-if="!!row.name_2">{{ row.name_2 }}</vxe-checkbox>
-        </template>
-      </vxe-table-column>
-      <vxe-table-column field="name_3" title="按钮权限">
-        <template v-slot="{ row }">
-          <vxe-checkbox v-model="row.check_3" v-if="!!row.name_3">{{ row.name_3 }}</vxe-checkbox>
-          <el-button @click="deleteFunction(row.id_3)" v-if="showDelBtn && row.name_3">删除该权限</el-button>
-        </template>
-      </vxe-table-column>
-    </vxe-table>
+    border
+    :span-method="rowspanMethod"
+    :data="tableData">
+    <vxe-table-column field="name_1" title="功能模块">
+      <template v-slot="{ row }">
+        <vxe-checkbox v-model="row.check_1" @change="check1ChangeEvent(row)">{{ row.name_1 }}</vxe-checkbox>
+      </template>
+    </vxe-table-column>
+    <vxe-table-column field="name_2" title="详细功能">
+      <template v-slot="{ row }">
+        <vxe-checkbox v-model="row.check_2" @change="check2ChangeEvent(row)" v-if="!!row.name_2">{{ row.name_2 }}</vxe-checkbox>
+      </template>
+    </vxe-table-column>
+    <vxe-table-column field="name_3" title="按钮权限">
+      <template v-slot="{ row }">
+        <vxe-checkbox v-model="row.check_3" v-if="!!row.name_3">{{ row.name_3 }}</vxe-checkbox>
+        <el-button @click="deleteFunction(row.id_3)" v-if="showDelBtn && row.name_3">删除该权限</el-button>
+      </template>
+    </vxe-table-column>
+  </vxe-table>
 </template>
 
 <script>
@@ -28,7 +28,8 @@ import {get, post} from '@/api/request'
 export default {
   name: 'functionTable',
   props: {
-    showDelBtn: Boolean
+    showDelBtn: Boolean,
+    functionIds: Array
   },
   data(){
     return {
@@ -39,6 +40,15 @@ export default {
     this.getFunctionAndDetailAndButton();
   },
   methods: {
+    setFunctionCheckTrue() {
+      this.tableData.forEach(item => {
+        [1, 2, 3].forEach(num => {
+          if(this.functionIds && this.functionIds.indexOf(item['id_'+num]) > -1){
+            item['check_'+num] = true;
+          }
+        })
+      })
+    },
     check1ChangeEvent (row) {
       let checked = row.check_1;
       let levelList = this.tableData.filter(item => item.id_1 === row.id_1);
@@ -85,6 +95,7 @@ export default {
       }, options)
       this.keyMap = keyMap
       this.tableData = list
+      this.setFunctionCheckTrue()
     },
     // 通用行合并函数（将相同多列数据合并为一行）
     rowspanMethod ({ row, $rowIndex, column, data }) {

@@ -15,7 +15,7 @@
       :visible.sync="dialogVisible"
       >
       <div>
-        <FunctionTable ref="functionTable" :showDelBtn="false"></FunctionTable>
+        <FunctionTable v-if="dialogVisible" ref="functionTable" :showDelBtn="false" :functionIds="functionIds"></FunctionTable>
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
@@ -26,9 +26,10 @@
 </template>
 
 <script>
-import {post} from '@/api/request'
+import {post, get} from '@/api/request'
 import axios from 'axios'
-import FunctionTable from "@/components/FunctionTable";
+import FunctionTable from "@/components/FunctionTable"
+// import { get } from 'xe-utils/methods';
 export default {
   name: 'role',
   components: {
@@ -91,14 +92,26 @@ export default {
             ]
           }
         }}
-      ]
+      ],
+      functionIds: []
     };
   },
   methods: {
     openSetFuntionDialog(row) {
-      
-      this.dialogVisible = true;
       this.selectedRoleId = row.roleId;
+      this.getFunctionsByRoleId();
+    },
+    getFunctionsByRoleId() {
+      get('/role/getFunctionsByRoleId', {
+        roleId: this.selectedRoleId
+      }).then((res) => {
+        if(res.code == 200){
+          this.functionIds = res.data.map((fun => {
+            return fun.function_id;
+          }));
+          this.dialogVisible = true;
+        }
+      })
     },
     bindRoleAndFunction() {
       let functionIds = [];

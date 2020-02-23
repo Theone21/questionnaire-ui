@@ -11,12 +11,29 @@
       :toolbar="tableToolbar"
       :edit-config="{trigger: 'click', mode: 'row', showStatus: true}"
       @toolbar-button-click="toolbarButtonClickEvent"></vxe-grid>
+
+      <el-dialog
+        title="设置用户的角色"
+        :visible.sync="dialogVisible"
+        width="30%">
+        <div class="roles">
+          <template>
+            <el-checkbox-group v-model="selectedRoleList">
+              <el-checkbox :label="role.roleId" v-for="role in roles" :key="role.roleId" :value="role.value">{{role.roleName}}</el-checkbox>
+            </el-checkbox-group>
+          </template>
+        </div>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="dialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="submitSetUserRoles">确 定</el-button>
+        </span>
+      </el-dialog>
   </div>
 </template>
 
 <script>
 import {addUser} from '@/api/api'
-import {post} from '@/api/request'
+import {post, get} from '@/api/request'
 import axios from 'axios';
 export default {
   name: 'user',
@@ -68,9 +85,23 @@ export default {
         { type: 'checkbox', width: 50 },
         { type: 'seq', width: 60, title: '序号' },
         { field: 'userName', title: '用户名', editRender: { name: 'input' } },
-        {field: 'userPassword', title: '密码', editRender: { name: 'input' }}
-      ]
+        { field: 'userPassword', title: '密码', editRender: { name: 'input' } },
+        { field: 'operator', title: '操作', slots: {
+          default: ({row, column}) => {
+            return [
+              <el-button onClick={ () => this.setUserRoles(row, column) } type="primary" size="mini">设置角色</el-button>
+            ]
+          }
+        }}
+      ],
+      dialogVisible: false,
+      selectedRoleList: [],
+      roles: [],
+      selectedUserId: -1
     }
+  },
+  created() {
+    this.getAllRoles();
   },
   methods: {
     submitAddUser(){
@@ -86,6 +117,38 @@ export default {
           this.$XModal.alert(code)
           break
       }
+    },
+    getAllRoles() {
+      get('/role/getAllRoles', {}).then((res) => {
+        if(res.code == 200){
+          this.roles = res.data;
+        }
+      })
+    },
+    setUserRoles(row){
+      this.selectedUserId = row.userId;
+      get('/role/getUserRoes', {
+        userId: this.selectedUserId
+      }).then((res) => {
+        if(res.code == 200){
+          this.selectedRoleList = res.data.map((role) => role.roleId);
+          this.dialogVisible = true;
+        }
+        
+      })
+      
+      
+    },
+    submitSetUserRoles() {
+      post('/role/setUserRoles', {
+        userId: this.selectedUserId,
+        roles: JSON.stringify(this.selectedRoleList)
+      }).then((res) => {
+        if(res.code == 200){
+          this.$message('设置角色成功');
+          this.dialogVisible = false;
+        }
+      })
     }
   }
 }
